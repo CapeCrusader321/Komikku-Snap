@@ -1,0 +1,74 @@
+name: komikku
+base: core22
+adopt-info: komikku
+grade: stable
+confinement: strict
+compression: lzo
+architectures:
+  - build-on: amd64
+  - build-on: armhf
+  - build-on: arm64
+  
+slots:
+  komikku:
+    interface: dbus
+    bus: session
+    name: info.febvre.Komikku
+
+environment:
+  # WORKAROUND: Add python modules in Snap to search path
+  PYTHONPATH: ${SNAP}/usr/lib/python3/dist-packages:$PYTHONPATH
+
+apps:
+  komikku:
+    command: usr/bin/komikku
+    extensions: [gnome]
+    plugs:
+      - home
+      - network
+      - network-status
+      - optical-drive
+      - removable-media
+    common-id: info.febvre.Komikku
+    desktop: usr/share/applications/info.febvre.Komikku.desktop
+    
+    
+parts:
+  komikku:
+    source: https://gitlab.com/valos/Komikku.git
+    plugin: meson
+    parse-info: [usr/share/metainfo/info.febvre.Komikku.appdata.xml]
+    meson-parameters:
+      - --prefix=/snap/komikku/current/usr
+    build-packages:
+      - python3-bs4
+      - libbrotli-dev
+      - python3-brotli
+      - python3-dateparser
+      - python3-emoji
+      - python3-keyring
+      - python3-lxml
+      - python3-natsort
+      - python3-piexif
+      - python3-pil
+      - protobuf-compiler
+      - python3-gi
+      - python-gi-dev
+      - python3-magic
+      - rar
+      - unrar
+      - libunrar-dev
+      - unrar-free
+      - python3-requests
+      - python3-unidecode
+    override-pull: |
+      craftctl default
+      craftctl set version=$(git describe --tags --abbrev=0)
+      sed -e 's|Icon=info.febvre.Komikku|Icon=${SNAP}/usr/share/icons/hicolor/scalable/apps/info.febvre.Komikku.svg|' -i data/info.febvre.Komikku.desktop.in
+    override-build: |
+      craftctl default
+      # WORKAROUND: Use python from search path, the path detected by meson doesn't exist when running the Snap
+      sed -e '1c#!/usr/bin/env python3' -i ${CRAFT_PART_INSTALL}/snap/komikku/current/usr/bin/komikku
+    organize:
+      snap/komikku/current/usr: usr
+    
