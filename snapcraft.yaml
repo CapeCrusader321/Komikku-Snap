@@ -55,7 +55,6 @@ parts:
       - python3-gi
       - python-gi-dev
       - python3-magic
-      - rar
       - unrar
       - libunrar-dev
       - unrar-free
