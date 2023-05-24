@@ -8,7 +8,13 @@ architectures:
   - build-on: amd64
   - build-on: armhf
   - build-on: arm64
-  
+
+layout:
+  /usr/lib/python3/dist-packages/gi:
+      bind: $SNAP/gnome-platform/usr/lib/python3/dist-packages/gi
+  /usr/lib/python3/dist-packages/cairo:
+      bind: $SNAP/gnome-platform/usr/lib/python3/dist-packages/cairo    
+
 slots:
   komikku:
     interface: dbus
@@ -83,13 +89,6 @@ parts:
       - unrar-free
       - python3-requests
       - python3-unidecode
-      - python3-gi
-      - python3-cairo
-      - gir1.2-glib-2.0
-      - gir1.2-gtk-3.0
-      - gir1.2-notify-0.7
-      - gir1.2-webkit2-4.1
-      - libgirepository-1.0-1 
     organize:
       snap/komikku/current/usr: usr
     
